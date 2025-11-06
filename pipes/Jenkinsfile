@@ -1,0 +1,18 @@
+library "GissFwDevOps@V5"
+
+FwDevOps("maven",
+  [
+    "MAVEN_OPTS": "-Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true",    
+    "TOOLS_DEPLOY":"XL",
+	"KIUWAN_APP":"GPRE0000",
+	"DIR_KIUWAN_SRC":"JAVA",
+    "CD": "true",
+    "XLDEPLOY_ENABLE":"true",
+    "CODE_REVIEW":"true",
+    "UNIT_TEST":"false",
+    "COMPILABLES": "java",
+    "ENVIO_CORREO_PROMOCION_PRO":"false"
+    //"EXEC_KIUWAN_INT":"true"
+
+   ]
+)

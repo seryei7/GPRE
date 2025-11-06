@@ -1,0 +1,81 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.giss.gpre</groupId>
+		<artifactId>gpre0000</artifactId>
+		<version>${version}</version>
+	</parent>
+
+	<artifactId>GPRE</artifactId>
+	<packaging>ear</packaging>
+
+    <build>
+    	<finalName>GPRE</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <earSourceDirectory>.</earSourceDirectory>
+                    <earSourceIncludes>META-INF/MANIFEST.MF, META-INF/application.xml</earSourceIncludes>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <modules>
+                        <webModule>
+                            <groupId>com.giss.gpre</groupId>
+                            <artifactId>gestionPresencia</artifactId>
+                            <contextRoot>/gestionPresencia</contextRoot>
+                            <bundleFileName>gestionPresencia.war</bundleFileName>
+                        </webModule>
+                        <ejbModule>
+                            <groupId>com.giss.gpre</groupId>
+                            <artifactId>gestionPresenciaEJB</artifactId>
+                            <bundleFileName>gestionPresenciaEJB.jar</bundleFileName>
+                        </ejbModule>
+                    </modules>
+                </configuration>
+            </plugin>
+		</plugins>
+	</build>
+	<profiles>
+        <profile>
+            <id>conibmconfig</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-ear-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <configuration>
+                            <earSourceIncludes>META-INF/ibmconfig/**</earSourceIncludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+	<dependencies>
+		<dependency>
+			<groupId>com.giss.gpre</groupId>
+			<artifactId>gestionPresenciaEJB</artifactId>
+			<version>${version}</version>
+			<type>ejb</type>
+		</dependency>
+		<dependency>
+			<groupId>com.giss.gpre</groupId>
+			<artifactId>gestionPresencia</artifactId>
+			<version>${version}</version>
+			<type>war</type>
+		</dependency>
+	</dependencies>
+</project>

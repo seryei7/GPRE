@@ -1,0 +1,272 @@
+.container {
+	margin: 20px auto;
+	background: #fff;
+	padding: 20px;
+	border-radius: 6px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+	text-align: center;
+	margin-bottom: 25px;
+	font-size: 20px;
+}
+
+fieldset {
+	border: 1px solid #ccc;
+	margin-bottom: 20px;
+	padding: 15px;
+}
+
+legend {
+	font-weight: bold;
+	font-size: 16px;
+}
+
+label {
+	display: inline-block;
+	font-weight: bold;
+	margin-bottom: 8px;
+}
+
+input[type="text"] {
+	width: 50px;
+	padding: 8px;
+	margin-bottom: 12px;
+	font-size: 15px;
+}
+
+input[type="date"] {
+	width: 140px;
+	padding: 8px;
+	margin-bottom: 12px;
+	font-size: 15px;
+}
+
+.buttons {
+	text-align: center;
+	margin-top: 25px;
+}
+
+.buttons input {
+	padding: 10px 20px;
+	margin: 0 8px;
+	font-weight: bold;
+	font-size: 15px;
+	cursor: pointer;
+	border-radius: 4px;
+	border: 1px solid #ccc;
+	background-color: #eaeaea;
+}
+
+.buttons input:hover {
+	background-color: #dcdcdc;
+}
+
+/* Estilo para el rango de fechas */
+.fecha-rango {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	flex-wrap: wrap;
+}
+
+.fecha-rango label {
+	width: auto;
+	font-weight: bold;
+	font-size: 15px;
+}
+
+.fecha-rango input[type="date"] {
+	width: auto;
+	padding: 8px;
+	font-size: 15px;
+}
+
+/* Media query para pantallas pequeñas */
+@media ( max-width : 600px) {
+	label {
+		width: 100%;
+	}
+	input[type="text"], input[type="date"] {
+		width: 100%;
+	}
+	.fecha-rango {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.fecha-rango span {
+		margin-top: 5px;
+	}
+}
+
+.form-row {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 8px;
+	gap: 8px;
+}
+
+.form-row label {
+	font-weight: bold;
+	margin-right: 4px;
+}
+
+.form-row input[type="text"], .form-row input[type="date"] {
+	padding: 5px;
+	font-size: 14px;
+}
+
+/* Contenedor de columnas */
+.columns-container {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 20px;
+	gap: 15px;
+}
+
+.column {
+	border: 1px solid #ccc;
+	padding: 10px;
+	background-color: #fafafa;
+}
+
+.column.centros {
+	flex: 0 0 65%;
+	border: 1px solid #ccc;
+	padding: 10px;
+	background-color: #fafafa;
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.column.personal {
+	flex: 0 0 33%;
+	border: 1px solid #ccc;
+	padding: 10px;
+	background-color: #fafafa;
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+/* Cabeceras más pequeñas */
+.column h3 {
+	margin-top: 0;
+	font-size: 13px;
+	background-color: #eaeaea;
+	padding: 4px 6px;
+	font-weight: bold;
+	line-height: 1.2;
+}
+
+/* Lista de checkboxes */
+.checkbox-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.checkbox-list li {
+	margin-bottom: 5px;
+	font-size: 14px;
+}
+
+/* Estilos del árbol */
+.tree ul {
+	list-style-type: none;
+	padding-left: 0;
+	margin: 0;
+}
+
+.tree li {
+	margin: 2px 0;
+	position: relative;
+}
+
+/* Botón de toggle */
+.toggle-btn-saldo {
+	cursor: pointer;
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	text-align: center;
+	line-height: 16px;
+	margin-right: 5px;
+	font-weight: bold;
+	font-size: 14px;
+	color: #333;
+	border: 1px solid #999;
+	background-color: #f0f0f0;
+	border-radius: 3px;
+	user-select: none;
+}
+
+.toggle-btn-saldo:hover {
+	background-color: #e0e0e0;
+	border-color: #666;
+}
+
+/* Items padre (centros) */
+.parent-item {
+	padding: 4px 0;
+	font-weight: 500;
+}
+
+.parent-item>.parent-checkbox {
+	margin-right: 6px;
+	vertical-align: top;
+}
+
+/* Lista de hijos con mayor sangría */
+.child-list {
+	list-style-type: none;
+	padding-left: 40px !important; /* Sangría más pronunciada */
+	margin: 5px 0 5px 0;
+	border-left: 2px solid #ddd; /* Línea visual para mostrar jerarquía */
+}
+
+/* Items hijo (unidades) */
+.child-item {
+	padding: 3px 0;
+	margin-left: 5px;
+	font-weight: normal;
+	color: #555;
+	position: relative;
+}
+
+.child-item::before {
+	content: '';
+	position: absolute;
+	left: -15px;
+	top: 50%;
+	width: 10px;
+	height: 1px;
+	background-color: #ccc;
+}
+
+.child-item>.child-checkbox {
+	margin-right: 6px;
+	vertical-align: top;
+}
+
+/* Estado colapsado */
+.collapsed>.child-list {
+	display: none;
+}
+
+/* Estado expandido */
+.expanded>.child-list {
+	display: block;
+}
+
+/* Estilo para checkbox indeterminado (cuando algunos hijos están marcados) */
+input[type="checkbox"]:indeterminate {
+	opacity: 0.6;
+}
+
+#btnInforme:disabled {
+  background-color: #ccc;   /* Gris claro */
+  color: #666;              /* Texto gris oscuro */
+  opacity: 0.7;             /* Un poco transparente */
+}

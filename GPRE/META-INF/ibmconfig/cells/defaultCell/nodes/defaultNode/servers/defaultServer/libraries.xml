@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI"
+	xmlns:libraries="http://www.ibm.com/websphere/appserver/schemas/5.0/libraries.xmi">
+	<libraries:Library xmi:id="Library_1596538304705"
+		name="OracleDriver Driver Jars" description="Generado automáticamente por las herramientas web"
+		isolatedClassLoader="false">
+		<classPath>C:\Proyectos WENN\Desarrollo\Librerias\ojdbc8.jar
+		</classPath>
+	</libraries:Library>
+	<libraries:Library xmi:id="Library_1271071070814"
+		name="LibreriasGPRE" description="Libreria de GPRE"
+		isolatedClassLoader="true">
+		<classPath>C:\Proyectos WENN\Desarrollo\GPRE</classPath>
+	</libraries:Library>
+</xmi:XMI>

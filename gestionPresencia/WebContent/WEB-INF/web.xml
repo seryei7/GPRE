@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="3.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+	<display-name>gestionPresencia</display-name>
+	<resource-ref>
+		<res-ref-name>gestionPresencia</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/jsp/error.jsp</location>
+	</error-page>
+	<listener>
+		<listener-class>org.owasp.csrfguard.CsrfGuardServletContextListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.owasp.csrfguard.CsrfGuardHttpSessionListener</listener-class>
+	</listener>
+	<filter>
+		<filter-name>CSRFGuard</filter-name>
+		<filter-class>org.owasp.csrfguard.CsrfGuardFilter</filter-class>
+	</filter>
+	<context-param>
+		<param-name>Owasp.CsrfGuard.Config</param-name>
+		<param-value>WEB-INF/csrfguard.properties</param-value>
+	</context-param>
+	<filter-mapping>
+		<filter-name>CSRFGuard</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- Filter Declaration -->
+    <filter>
+        <filter-name>SingleSessionFilter</filter-name>
+        <filter-class>com.giss.gpre.util.SingleSessionFilter</filter-class>
+    </filter>
+
+	<!--Filter Mapping -->
+    <filter-mapping>
+        <filter-name>SingleSessionFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+	
+    <resource-ref>
+       <description>EndPoint del servicio web de impresion</description>
+       <res-ref-name>ALIAS_INFRA_WSIMPRESION_ENDPOINT</res-ref-name>
+       <res-type>java.net.URL</res-type>
+       <res-auth>Container</res-auth>
+       <lookup-name>
+           url/INFRA_WSIMPRESION_ENDPOINT
+       </lookup-name>
+
+    </resource-ref>
+    <resource-ref>
+        <description />
+
+        <res-ref-name>WSIPSincronoEndPoint</res-ref-name>
+        <res-type>java.net.URL</res-type>
+        <res-auth>Container</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+        <lookup-name>
+            url/INFRWSIPSincrono/INFRA_WSIP_SINCRONA_ENDPOINT
+        </lookup-name>
+
+    </resource-ref>
+    <resource-ref>
+        <description>Recurso JNDI para rescatar el timeout del WSIP</description>
+        <res-ref-name>WSIPSincronoTimeout</res-ref-name>
+        <res-type>java.lang.String</res-type>
+        <res-auth>Container</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+        <lookup-name>config/WSIPSincrono/TimeoutClientes</lookup-name>
+    </resource-ref>
+</web-app>
