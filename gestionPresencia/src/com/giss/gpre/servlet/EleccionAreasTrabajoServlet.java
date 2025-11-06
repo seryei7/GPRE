@@ -1,23 +1,20 @@
 package com.giss.gpre.servlet;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.errors.AccessControlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.giss.gpre.constants.JNDIConstants;
+import com.giss.gpre.constants.SessionAttributes;
+import com.giss.gpre.constants.URLConstants;
+import com.giss.gpre.constants.ValidationConstants;
 import com.giss.gpre.datos.DatosArea;
 import com.giss.gpre.ejb.AANService;
 import com.giss.gpre.entidades.Persona;
@@ -25,79 +22,69 @@ import com.giss.gpre.util.GpreException;
 import com.giss.gpre.util.LimpiarParametro;
 import com.giss.gpre.util.VariablesGlobales;
 
+/**
+ * Servlet para la elección de áreas de trabajo.
+ * Muestra al usuario las áreas de trabajo disponibles según sus permisos.
+ */
 @WebServlet(name = "inicio", urlPatterns = { "/eleccionArea" })
-public class EleccionAreasTrabajoServlet extends HttpServlet {
+public class EleccionAreasTrabajoServlet extends BaseServlet {
 
 	private static final long serialVersionUID = 2217548888270629877L;
-	private static final Logger LOGGER = LoggerFactory.getLogger("gpre.General");
-	private static final ConcurrentHashMap<String, HttpSession> activeSessions = new ConcurrentHashMap<>();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		ESAPI.httpUtilities().setCurrentHTTP(req, resp);
+		initializeESAPI(req, resp);
 		HttpSession session = ESAPI.currentRequest().getSession(false);
 
-		boolean nodos = false;
-		String mensaje;
-		String usuario = (String) session.getAttribute("tDni");
+		String usuario = (String) session.getAttribute(SessionAttributes.DNI);
 		
 		try {
-			List<DatosArea> listaAccesoNivel;
-			Persona persona = new Persona();
 			Context ctx = new InitialContext();
-			AANService aanService = (AANService) ctx.lookup("java:global/GPRE/gestionPresenciaEJB/AANServiceBean");
+			AANService aanService = (AANService) ctx.lookup(JNDIConstants.AAN_SERVICE);
 
-			int userValidacion = (int) aanService.ValidarUsuario(usuario);
-			if (userValidacion == 22001) {
-				throw new GpreException("El usuario no esta dado de alta en Acceso");
-			} else if (userValidacion == 22003) {
-				throw new GpreException("El usuario no ha sido autorizado en la Aplicación");
-			} else if (userValidacion == 0) {
-				persona = aanService.personaByDNI(usuario);
+			// Validar usuario
+			int codigoValidacion = (int) aanService.ValidarUsuario(usuario);
+			validarCodigoUsuario(codigoValidacion);
+			
+			Persona persona = aanService.personaByDNI(usuario);
+			if (persona == null) {
+				throw new GpreException("No se pudo obtener información del usuario");
 			}
 			
-			//Lista de Areas de trabajo del usuario
-			listaAccesoNivel = aanService.areasDeTrabajoNivel(usuario);
+			// Obtener áreas de trabajo del usuario
+			List<DatosArea> listaAccesoNivel = aanService.areasDeTrabajoNivel(usuario);
 			if (listaAccesoNivel == null || listaAccesoNivel.isEmpty()) {
-				throw new GpreException("Persona sin Areas de trabajo. Consultar con su administrador.");
+				throw new GpreException("Persona sin áreas de trabajo. Consultar con su administrador.");
 			}
 			
+			// Establecer atributos de request
 			req.setAttribute("lista", listaAccesoNivel);
 			req.setAttribute("persona", persona);
-			req.setAttribute("nodos", nodos);
+			req.setAttribute("nodos", false);
 
-			if(VariablesGlobales.getVersion() != null) {
-				session.setAttribute("version", VariablesGlobales.getVersion());
+			// Actualizar versión en sesión
+			if (VariablesGlobales.getVersion() != null) {
+				session.setAttribute(SessionAttributes.VERSION, VariablesGlobales.getVersion());
 			}
 			
-			String csrftokenC = LimpiarParametro.getOwaspCsrfTokenGet(req, "/gestionPresencia/index.jsp");
-			doForward(req, resp, "/index.jsp?" + csrftokenC);
-//			GpreException | NamingException | 
-		} catch (Throwable e) {
-			mensaje = "Error al procesar la solicitud {" + e + "}";
-			LOGGER.debug(mensaje);
-			req.setAttribute("javax.servlet.jsp.jspException", e);
-			doForward(req, resp, "/jsp/error.jsp");
+			String csrfToken = LimpiarParametro.getOwaspCsrfTokenGet(req, URLConstants.INDEX_JSP);
+			doForward(req, resp, "/index.jsp?" + csrfToken);
+		} catch (Exception e) {
+			handleError(req, resp, e, "Error al cargar áreas de trabajo");
 		}
-
 	}
 
 	/**
-	 * Forward the request
-	 *
-	 * @param request
-	 *            - HTTP request
-	 * @param response
-	 *            - HTTP response
-	 * @param nextPage
-	 *            - the next page to forward too
+	 * Valida el código de retorno de la validación de usuario.
+	 * 
+	 * @param codigoValidacion Código retornado por el servicio
+	 * @throws GpreException Si el código indica un error
 	 */
-	private final void doForward(HttpServletRequest request, HttpServletResponse response, String nextPage) {
-		try {
-			LimpiarParametro.safeSendForward(request, response, nextPage);
-		} catch (IOException | ServletException | AccessControlException e) {
-			LOGGER.debug("Error al procesar la solicitud {" + e + "}");
+	private void validarCodigoUsuario(int codigoValidacion) throws GpreException {
+		if (codigoValidacion == ValidationConstants.ERROR_USUARIO_NO_ALTA) {
+			throw new GpreException("El usuario no está dado de alta en el sistema");
+		} else if (codigoValidacion == ValidationConstants.ERROR_USUARIO_NO_AUTORIZADO) {
+			throw new GpreException("El usuario no ha sido autorizado en la aplicación");
 		}
 	}
-
 }

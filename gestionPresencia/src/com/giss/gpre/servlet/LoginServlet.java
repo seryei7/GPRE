@@ -9,97 +9,77 @@ import java.util.jar.Manifest;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.errors.AccessControlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.giss.gpre.constants.SessionAttributes;
+import com.giss.gpre.constants.URLConstants;
+import com.giss.gpre.constants.ValidationConstants;
 import com.giss.gpre.util.LimpiarParametro;
 import com.giss.gpre.util.VariablesGlobales;
 
+/**
+ * Servlet de inicio de sesión.
+ * Gestiona el acceso inicial del usuario a la aplicación.
+ */
 @WebServlet(name = "login", urlPatterns = { "/acceso" })
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends BaseServlet {
 
 	private static final long serialVersionUID = 2217548888270629877L;
-	private static final Logger LOGGER = LoggerFactory.getLogger("gpre.General");
 
 	@Override
 	public void init() throws ServletException {
-		
-		Enumeration<URL> en;
 		try {
-			en = Thread.currentThread().getContextClassLoader().getResources("META-INF/MANIFEST.MF");
-			while (en.hasMoreElements()) {
-				URL u = en.nextElement();
-				try (InputStream is = u.openStream()) {
-					Manifest mf = new Manifest(is);
-					Attributes a = mf.getMainAttributes();
-					VariablesGlobales.setVersion(a.getValue("Implementation-Version"));
+			Enumeration<URL> manifestUrls = Thread.currentThread()
+				.getContextClassLoader()
+				.getResources("META-INF/MANIFEST.MF");
+			
+			while (manifestUrls.hasMoreElements()) {
+				URL manifestUrl = manifestUrls.nextElement();
+				try (InputStream is = manifestUrl.openStream()) {
+					Manifest manifest = new Manifest(is);
+					Attributes attributes = manifest.getMainAttributes();
+					String version = attributes.getValue("Implementation-Version");
+					if (version != null) {
+						VariablesGlobales.setVersion(version);
+					}
 				}
 			}
-		} catch (IOException e) {                       
-			String mensaje = "Error al procesar la solicitud {" + e + "}";
-			LOGGER.debug(mensaje);
+		} catch (IOException e) {
+			LOGGER.error("Error al cargar versión desde MANIFEST.MF: {}", e.getMessage(), e);
 		}
 
-		LOGGER.info("inicio GPRE - " + VariablesGlobales.getVersion());
-
+		LOGGER.info("Inicio GPRE - versión: {}", VariablesGlobales.getVersion());
 	}
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) {
-		// Initialize ESAPI request and response
-		ESAPI.httpUtilities().setCurrentHTTP(req, resp);
+		initializeESAPI(req, resp);
 		
-		// Creación de la session
+		// Creación de la sesión con regeneración del ID por seguridad
 		HttpSession session = ESAPI.currentRequest().getSession(true);
-		
-		String mensaje;
-		String usuario = req.getParameter("tDni");
-		
 		ESAPI.currentRequest().changeSessionId();
 		
-		try {			
-			if (usuario != null && usuario.matches("[a-zA-Z0-9]+")) {
-				session.setAttribute("tDni", usuario);
-			}
-			
-			if(VariablesGlobales.getVersion() != null) {
-				session.setAttribute("version", VariablesGlobales.getVersion());
-			}
-			
-			String csrftokenC = LimpiarParametro.getOwaspCsrfTokenGet(req, "/gestionPresencia/eleccionArea");
-			doForward(req, resp, "/eleccionArea?" + csrftokenC);
-		} catch (Exception e) {
-			mensaje = "Error al procesar la solicitud {" + e + "}";
-			LOGGER.debug(mensaje);
-			req.setAttribute("javax.servlet.jsp.jspException", e);
-			doForward(req, resp, "/jsp/error.jsp");
-		}
-
-	}
-
-	/**
-	 * Forward the request
-	 *
-	 * @param request
-	 *            - HTTP request
-	 * @param response
-	 *            - HTTP response
-	 * @param nextPage
-	 *            - the next page to forward too
-	 */
-	private final void doForward(HttpServletRequest request, HttpServletResponse response, String nextPage) {
+		String usuario = req.getParameter(SessionAttributes.DNI);
+		
 		try {
-			LimpiarParametro.safeSendForward(request, response, nextPage);
-		} catch (IOException | ServletException | AccessControlException e) {
-			LOGGER.debug("Error al procesar la solicitud {" + e + "}");
+			// Validar y establecer usuario en sesión
+			if (usuario != null && usuario.matches(ValidationConstants.ALPHANUMERIC_PATTERN)) {
+				session.setAttribute(SessionAttributes.DNI, usuario);
+			}
+			
+			// Establecer versión en sesión
+			if (VariablesGlobales.getVersion() != null) {
+				session.setAttribute(SessionAttributes.VERSION, VariablesGlobales.getVersion());
+			}
+			
+			String csrfToken = LimpiarParametro.getOwaspCsrfTokenGet(req, URLConstants.ELECCION_AREA_SERVLET);
+			doForward(req, resp, "/eleccionArea?" + csrfToken);
+		} catch (Exception e) {
+			handleError(req, resp, e, "Error en el proceso de login");
 		}
 	}
-	
 }

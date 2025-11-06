@@ -1,104 +1,79 @@
 package com.giss.gpre.servlet.areasTrabajo;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.errors.AccessControlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.giss.gpre.constants.JNDIConstants;
+import com.giss.gpre.constants.SessionAttributes;
+import com.giss.gpre.constants.URLConstants;
 import com.giss.gpre.ejb.UsuariosService;
 import com.giss.gpre.entidades.Persona;
+import com.giss.gpre.servlet.BaseServlet;
 import com.giss.gpre.util.LimpiarParametro;
 import com.google.gson.Gson;
 
+/**
+ * Servlet para gestión de personas/usuarios.
+ * Permite dar de alta y gestionar personal del área de trabajo.
+ */
 @WebServlet(name = "personas", urlPatterns = { "/mntPersonal" })
-public class AltaPersonasServlet extends HttpServlet {
+public class AltaPersonasServlet extends BaseServlet {
 
 	private static final long serialVersionUID = 2217548888270629877L;
-	private static final Logger LOGGER = LoggerFactory.getLogger("gpre.General");
-
-	// @EJB
-	// private transient AANService aanService;
+	private static final Gson GSON = new Gson();
 
 	@Override
 	public void init() throws ServletException {
 		ServletContext contexto = getServletContext();
-		if (contexto.getAttribute("activeSessions") == null) {
-			contexto.setAttribute("activeSessions", new ConcurrentHashMap<String, HttpSession>());
+		if (contexto.getAttribute(SessionAttributes.ACTIVE_SESSIONS) == null) {
+			contexto.setAttribute(SessionAttributes.ACTIVE_SESSIONS, 
+				new ConcurrentHashMap<String, HttpSession>());
 		}
-
 	}
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) {
-		// Initialize ESAPI request and response
-		ESAPI.httpUtilities().setCurrentHTTP(req, resp);
-
-		boolean nodos = true;
-		String mensaje;
+		initializeESAPI(req, resp);
 		HttpSession session = ESAPI.currentRequest().getSession(false);
-		String entidad = (String) session.getAttribute("entGesEp");
-		String provincia = (String) session.getAttribute("provincia");
-		String centro = (String) session.getAttribute("cenGesEp");
-		BigDecimal entidad2 = new BigDecimal(entidad);
-		BigDecimal provincia2 = new BigDecimal(provincia);
-		BigDecimal centro2 = new BigDecimal(centro);
-//		String idDni = (String) session.getAttribute("tDni");
 		
 		try {
-
+			// Obtener datos de área de trabajo desde la sesión
+			String entidad = (String) session.getAttribute(SessionAttributes.ENTIDAD);
+			String provincia = (String) session.getAttribute(SessionAttributes.PROVINCIA);
+			String centro = (String) session.getAttribute(SessionAttributes.CENTRO);
 			
+			BigDecimal entidadBD = new BigDecimal(entidad);
+			BigDecimal provinciaBD = new BigDecimal(provincia);
+			BigDecimal centroBD = new BigDecimal(centro);
+			
+			// Obtener servicio de usuarios
 			Context ctx = new InitialContext();
-			UsuariosService usuariosService = (UsuariosService) ctx.lookup("java:global/GPRE/gestionPresenciaEJB/UsuariosServiceBean");
+			UsuariosService usuariosService = (UsuariosService) ctx.lookup(JNDIConstants.USUARIOS_SERVICE);
 			
-			List<Persona> listUsuarios = usuariosService.personaForGestor(entidad2, provincia2, centro2);
+			// Obtener lista de usuarios del área
+			List<Persona> listUsuarios = usuariosService.personaForGestor(entidadBD, provinciaBD, centroBD);
 			
-			String usuariosJson = new Gson().toJson(listUsuarios);
-			
+			// Serializar a JSON de forma segura
+			String usuariosJson = GSON.toJson(listUsuarios);
 			req.setAttribute("listUsuarios", usuariosJson);
 			
-			String csrftokenC = LimpiarParametro.getOwaspCsrfTokenGet(req, "/gestionPresencia/jsp/Usuarios.jsp");
-			doForward(req, resp, "/jsp/Usuarios.jsp?" + csrftokenC);
+			String csrfToken = LimpiarParametro.getOwaspCsrfTokenGet(req, URLConstants.USUARIOS_JSP);
+			doForward(req, resp, "/jsp/Usuarios.jsp?" + csrfToken);
 
-		} catch (NamingException e) {
-			mensaje = "Error al procesar la solicitud {" + e + "}";
-			LOGGER.debug(mensaje);
-			req.setAttribute("javax.servlet.jsp.jspException", e);
-			// forward the control to your jsp error page
-			doForward(req, resp, "/jsp/error.jsp");
-		}
-	}
-
-	/**
-	 * Forward the request
-	 *
-	 * @param request
-	 *            - HTTP request
-	 * @param response
-	 *            - HTTP response
-	 * @param nextPage
-	 *            - the next page to forward too
-	 */
-	private final void doForward(HttpServletRequest request, HttpServletResponse response, String nextPage) {
-		try {
-			LimpiarParametro.safeSendForward(request, response, nextPage);
-		} catch (IOException | ServletException | AccessControlException e) {
-			LOGGER.debug("Error al procesar la solicitud {" + e + "}");
+		} catch (Exception e) {
+			handleError(req, resp, e, "Error al cargar lista de usuarios");
 		}
 	}
 }

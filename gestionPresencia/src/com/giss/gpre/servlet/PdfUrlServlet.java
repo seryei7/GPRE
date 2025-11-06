@@ -2,42 +2,52 @@ package com.giss.gpre.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.giss.gpre.constants.SessionAttributes;
+import com.google.gson.Gson;
+
+/**
+ * Servlet para obtener la URL del PDF almacenada en sesión.
+ * Retorna la respuesta en formato JSON de forma segura.
+ */
 @WebServlet("/gestionPresencia/getPdfUrl")
-public class PdfUrlServlet extends HttpServlet {
+public class PdfUrlServlet extends BaseServlet {
+	
 	private static final long serialVersionUID = 1L;
+	private static final Gson GSON = new Gson();
 
 	@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        // Obtener la sesión
-        HttpSession session = req.getSession(false); // false para no crear una nueva sesión si no existe
+        HttpSession session = req.getSession(false);
 
-        // Configurar la respuesta como JSON
-        resp.setContentType("application/json");
-        PrintWriter out = resp.getWriter();
+        // Configurar respuesta como JSON con charset UTF-8
+        resp.setContentType("application/json; charset=UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        
+        Map<String, String> response = new HashMap<>();
 
         if (session != null) {
-            // Obtener la URL del PDF desde la sesión
-            String pdfUrl = (String) session.getAttribute("pdf");
-
-            if (pdfUrl != null) {
-                // Devolver la URL del PDF como JSON
-                out.print("{\"pdf\": \"" + pdfUrl + "\"}");
+            String pdfUrl = (String) session.getAttribute(SessionAttributes.PDF);
+            
+            if (pdfUrl != null && !pdfUrl.trim().isEmpty()) {
+                response.put("pdf", pdfUrl);
             } else {
-                // Si no hay URL, devolver un mensaje de error
-                out.print("{\"error\": \"No se encontró la URL del PDF\"}");
+                response.put("error", "No se encontró la URL del PDF");
             }
         } else {
-            // Si no hay sesión, devolver un mensaje de error
-            out.print("{\"error\": \"No hay sesión activa\"}");
+            response.put("error", "No hay sesión activa");
         }
 
-        out.close();
+        // Usar Gson para serializar de forma segura (previene XSS)
+        try (PrintWriter out = resp.getWriter()) {
+            out.print(GSON.toJson(response));
+        }
     }
 }

@@ -1,98 +1,79 @@
 package com.giss.gpre.servlet.areasTrabajo;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.errors.AccessControlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.giss.gpre.constants.JNDIConstants;
+import com.giss.gpre.constants.SessionAttributes;
+import com.giss.gpre.constants.URLConstants;
 import com.giss.gpre.ejb.IncidenciasService;
 import com.giss.gpre.entidades.Incidencias;
+import com.giss.gpre.servlet.BaseServlet;
 import com.giss.gpre.util.GenerarInformes;
 import com.giss.gpre.util.LimpiarParametro;
 import com.google.gson.Gson;
 
+/**
+ * Servlet para gestión de incidencias.
+ * Permite visualizar y gestionar las incidencias del sistema.
+ */
 @WebServlet(name = "incidencia", urlPatterns = { "/mntIncidencias" })
-public class IncidenciasServlet extends HttpServlet {
+public class IncidenciasServlet extends BaseServlet {
 
 	private static final long serialVersionUID = 2217548888270629877L;
-	private static final Logger LOGGER = LoggerFactory.getLogger("gpre.General");
-	private static final String INFORME = "GIDEGPREGIINC";
+	private static final String CODIGO_INFORME = "GIDEGPREGIINC";
+	private static final String FORMATO_PDF = "pdf";
+	private static final Gson GSON = new Gson();
 
 	@Override
 	public void init() throws ServletException {
 		ServletContext contexto = getServletContext();
-		if (contexto.getAttribute("activeSessions") == null) {
-			contexto.setAttribute("activeSessions", new ConcurrentHashMap<String, HttpSession>());
+		if (contexto.getAttribute(SessionAttributes.ACTIVE_SESSIONS) == null) {
+			contexto.setAttribute(SessionAttributes.ACTIVE_SESSIONS, 
+				new ConcurrentHashMap<String, HttpSession>());
 		}
-
 	}
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) {
-		// Initialize ESAPI request and response
-		ESAPI.httpUtilities().setCurrentHTTP(req, resp);
-		String mensaje;
+		initializeESAPI(req, resp);
 		HttpSession session = ESAPI.currentRequest().getSession(false);
 
 		try {
-
 			Context ctx = new InitialContext();
-			IncidenciasService incidenciasService = (IncidenciasService) ctx.lookup("java:global/GPRE/gestionPresenciaEJB/IncidenciasServiceBean");
+			IncidenciasService incidenciasService = (IncidenciasService) ctx.lookup(JNDIConstants.INCIDENCIAS_SERVICE);
 			
-			// DNI del usuario de la sesión
-			String dniSesion = (String) session.getAttribute("tDni");
+			// Obtener DNI del usuario desde la sesión
+			String dniUsuario = (String) session.getAttribute(SessionAttributes.DNI);
 			
+			// Obtener todas las incidencias
 			List<Incidencias> listIncidencias = incidenciasService.allIncidencias();
 			
-			String incidenciasJson = new Gson().toJson(listIncidencias);
-			
+			// Serializar a JSON de forma segura
+			String incidenciasJson = GSON.toJson(listIncidencias);
 			req.setAttribute("listaIncidencias", incidenciasJson);
 			
-            req.setAttribute("pdf", GenerarInformes.generarUrlFichero(listIncidencias, dniSesion, INFORME, "pdf"));
+			// Generar URL del informe PDF
+			String urlPdf = GenerarInformes.generarUrlFichero(listIncidencias, dniUsuario, 
+				CODIGO_INFORME, FORMATO_PDF);
+            req.setAttribute(SessionAttributes.PDF, urlPdf);
 			
-			String csrftokenC = LimpiarParametro.getOwaspCsrfTokenGet(req, "/gestionPresencia/jsp/Incidencias.jsp");
-			doForward(req, resp, "/jsp/Incidencias.jsp?" + csrftokenC);
+			String csrfToken = LimpiarParametro.getOwaspCsrfTokenGet(req, URLConstants.INCIDENCIAS_JSP);
+			doForward(req, resp, "/jsp/Incidencias.jsp?" + csrfToken);
 
-		} catch (NamingException e) {
-			mensaje = "Error al procesar la solicitud {" + e + "}";
-			LOGGER.debug(mensaje);
-			req.setAttribute("javax.servlet.jsp.jspException", e);
-			// forward the control to your jsp error page
-			doForward(req, resp, "/jsp/error.jsp");
+		} catch (Exception e) {
+			handleError(req, resp, e, "Error al cargar incidencias");
 		}
 	}
-
-	/**
-	 * Forward the request
-	 *
-	 * @param request
-	 *            - HTTP request
-	 * @param response
-	 *            - HTTP response
-	 * @param nextPage
-	 *            - the next page to forward too
-	 */
-	private final void doForward(HttpServletRequest request, HttpServletResponse response, String nextPage) {
-		try {
-			LimpiarParametro.safeSendForward(request, response, nextPage);
-		} catch (IOException | ServletException | AccessControlException e) {
-			LOGGER.debug("Error al procesar la solicitud {" + e + "}");
-		}
-	}
-
 }
