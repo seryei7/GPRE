@@ -1,147 +1,175 @@
 package com.giss.gpre.servlet;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.errors.AccessControlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.giss.gpre.constants.JNDIConstants;
+import com.giss.gpre.constants.SessionAttributes;
+import com.giss.gpre.constants.URLConstants;
+import com.giss.gpre.constants.ValidationConstants;
 import com.giss.gpre.ejb.AANService;
 import com.giss.gpre.entidades.Nodos;
 import com.giss.gpre.entidades.Persona;
 import com.giss.gpre.util.GpreException;
 import com.giss.gpre.util.LimpiarParametro;
 
+/**
+ * Servlet para gestionar nodos de áreas de trabajo.
+ * Organiza los nodos en una estructura jerárquica de 3 niveles.
+ */
 @WebServlet(name = "nodos", urlPatterns = { "/NodosTrabajos" })
-public class NodosAreaServlet extends HttpServlet {
+public class NodosAreaServlet extends BaseServlet {
 
 	private static final long serialVersionUID = 2217548888270629877L;
-	private static final Logger LOGGER = LoggerFactory.getLogger("gpre.General");
+	private static final BigDecimal NODO_RAIZ_ID = BigDecimal.ONE;
 
 	@Override
 	public void init() throws ServletException {
 		ServletContext contexto = getServletContext();
-		if (contexto.getAttribute("activeSessions") == null) {
-			contexto.setAttribute("activeSessions", new ConcurrentHashMap<String, HttpSession>());
+		if (contexto.getAttribute(SessionAttributes.ACTIVE_SESSIONS) == null) {
+			contexto.setAttribute(SessionAttributes.ACTIVE_SESSIONS, 
+				new ConcurrentHashMap<String, HttpSession>());
 		}
-
 	}
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) {
-		// Initialize ESAPI request and response
-		ESAPI.httpUtilities().setCurrentHTTP(req, resp);
-//		ESAPI.currentRequest().getSession(false);
-
-		boolean nodos = true;
-		String mensaje;
+		initializeESAPI(req, resp);
 		HttpSession session = ESAPI.currentRequest().getSession(false);
 
 		try {
-			Context ctx = new InitialContext();
-			AANService aanService = (AANService) ctx.lookup("java:global/GPRE/gestionPresenciaEJB/AANServiceBean");
+			// Obtener y validar parámetros
+			String usuario = req.getParameter(SessionAttributes.DNI);
+			String cenGesEp = req.getParameter(SessionAttributes.CENTRO);
+			String provincia = req.getParameter(SessionAttributes.PROVINCIA);
+			String entGesEp = req.getParameter(SessionAttributes.ENTIDAD);
+			String nivel = req.getParameter(SessionAttributes.NIVEL);
 			
-			String cenGesEp = req.getParameter("cenGesEp");
-			String provincia = req.getParameter("provincia");
-			String entGesEp = req.getParameter("entGesEp");
-			String usuario = req.getParameter("tDni");
+			validarParametrosEntrada(usuario, cenGesEp, provincia, entGesEp, nivel);
 
-			aanService.IncluirAreaSeleccionada(usuario, new BigDecimal(entGesEp), new BigDecimal(provincia), new BigDecimal(cenGesEp));
+			Context ctx = new InitialContext();
+			AANService aanService = (AANService) ctx.lookup(JNDIConstants.AAN_SERVICE);
+			
+			// Incluir área seleccionada
+			aanService.IncluirAreaSeleccionada(usuario, 
+				new BigDecimal(entGesEp), 
+				new BigDecimal(provincia), 
+				new BigDecimal(cenGesEp));
+			
 			Persona persona = aanService.personaByDNI(usuario);
-
-			String nivel = req.getParameter("cdNivel");
-			BigDecimal bdNivel = new BigDecimal(nivel);
-			List<Nodos> listaNodos = aanService.nodosTrabajo(bdNivel);
-
-			List<Nodos> nRaiz = new ArrayList<>();
-			List<Nodos> n1 = new ArrayList<>();
-			List<Nodos> n2 = new ArrayList<>();
-
-			for (Nodos nodo : listaNodos) {
-				if (nodo.getCdNodoPadre() != null && nodo.getCdNodoPadre().intValue() == 1) {
-					nRaiz.add(nodo);
-				}
-			}
-
-			for (Nodos nodo : listaNodos) {
-				for (Nodos padre : nRaiz) {
-					if (nodo.getCdNodoPadre() != null && nodo.getCdNodoPadre().equals(padre.getIdNodo())) {
-						n1.add(nodo);
-					}
-				}
-			}
-
-			for (Nodos nodo : listaNodos) {
-				for (Nodos hijo : n1) {
-					if (nodo.getCdNodoPadre() != null && nodo.getCdNodoPadre().equals(hijo.getIdNodo())) {
-						n2.add(nodo);
-					}
-				}
-			}
-
 			if (persona == null) {
 				throw new GpreException("Persona no autorizada. Consultar con su administrador.");
 			}
 
+			// Obtener y organizar nodos en jerarquía
+			List<Nodos> listaNodos = aanService.nodosTrabajo(new BigDecimal(nivel));
+			OrganizacionNodos organizacion = organizarNodosJerarquia(listaNodos);
+
+			// Establecer atributos de request
 			req.setAttribute("persona", persona);
-			req.setAttribute("nodos", nodos);
-			req.setAttribute("nRaiz", nRaiz);
-			req.setAttribute("n1", n1);
-			req.setAttribute("n2", n2);
-			if(usuario != null && usuario.matches("[a-zA-Z0-9]+") && nivel != null && nivel.matches("[a-zA-Z0-9]+") 
-					&& cenGesEp != null && cenGesEp.matches("[a-zA-Z0-9]+") 
-					&& provincia != null && provincia.matches("[a-zA-Z0-9]+")
-					&& entGesEp != null && entGesEp.matches("[a-zA-Z0-9]+")) {
-				session.setAttribute("tDni", usuario);
-				session.setAttribute("cdNivel", nivel);
-				session.setAttribute("cenGesEp", cenGesEp);
-				session.setAttribute("provincia", provincia);
-				session.setAttribute("entGesEp", entGesEp);
-			}
+			req.setAttribute("nodos", true);
+			req.setAttribute("nRaiz", organizacion.nRaiz);
+			req.setAttribute("n1", organizacion.n1);
+			req.setAttribute("n2", organizacion.n2);
+			
+			// Actualizar sesión con datos validados
+			actualizarSesion(session, usuario, nivel, cenGesEp, provincia, entGesEp);
 
-			String csrftokenC = LimpiarParametro.getOwaspCsrfTokenGet(req, "/gestionPresencia/index.jsp");
-			doForward(req, resp, "/index.jsp?" + csrftokenC);
+			String csrfToken = LimpiarParametro.getOwaspCsrfTokenGet(req, URLConstants.INDEX_JSP);
+			doForward(req, resp, "/index.jsp?" + csrfToken);
 
-		} catch (GpreException | NamingException e) {
-			mensaje = "Error al procesar la solicitud {" + e + "}";
-			LOGGER.debug(mensaje);
-			req.setAttribute("javax.servlet.jsp.jspException", e);
-			// forward the control to your jsp error page
-			doForward(req, resp, "/jsp/error.jsp");
+		} catch (Exception e) {
+			handleError(req, resp, e, "Error al cargar nodos de trabajo");
 		}
 	}
 
 	/**
-	 * Forward the request
-	 *
-	 * @param request
-	 *            - HTTP request
-	 * @param response
-	 *            - HTTP response
-	 * @param nextPage
-	 *            - the next page to forward too
+	 * Valida que todos los parámetros sean correctos.
 	 */
-	private final void doForward(HttpServletRequest request, HttpServletResponse response, String nextPage) {
-		try {
-			LimpiarParametro.safeSendForward(request, response, nextPage);
-		} catch (IOException | ServletException | AccessControlException e) {
-			LOGGER.debug("Error al procesar la solicitud {" + e + "}");
+	private void validarParametrosEntrada(String usuario, String cenGesEp, 
+			String provincia, String entGesEp, String nivel) throws GpreException {
+		if (!esParametroValido(usuario) || !esParametroValido(nivel) 
+				|| !esParametroValido(cenGesEp) || !esParametroValido(provincia)
+				|| !esParametroValido(entGesEp)) {
+			throw new GpreException("Parámetros de entrada inválidos");
 		}
+	}
+
+	/**
+	 * Valida un parámetro individual.
+	 */
+	private boolean esParametroValido(String parametro) {
+		return parametro != null && parametro.matches(ValidationConstants.ALPHANUMERIC_PATTERN);
+	}
+
+	/**
+	 * Organiza los nodos en una estructura jerárquica de 3 niveles.
+	 */
+	private OrganizacionNodos organizarNodosJerarquia(List<Nodos> listaNodos) {
+		OrganizacionNodos org = new OrganizacionNodos();
+		
+		// Nodos raíz (padre = 1)
+		org.nRaiz = listaNodos.stream()
+			.filter(nodo -> nodo.getCdNodoPadre() != null 
+				&& nodo.getCdNodoPadre().compareTo(NODO_RAIZ_ID) == 0)
+			.collect(Collectors.toList());
+
+		// Nodos nivel 1 (hijos de raíz)
+		org.n1 = listaNodos.stream()
+			.filter(nodo -> esHijoDe(nodo, org.nRaiz))
+			.collect(Collectors.toList());
+
+		// Nodos nivel 2 (hijos de nivel 1)
+		org.n2 = listaNodos.stream()
+			.filter(nodo -> esHijoDe(nodo, org.n1))
+			.collect(Collectors.toList());
+
+		return org;
+	}
+
+	/**
+	 * Verifica si un nodo es hijo de alguno de los nodos padres.
+	 */
+	private boolean esHijoDe(Nodos nodo, List<Nodos> padres) {
+		if (nodo.getCdNodoPadre() == null) {
+			return false;
+		}
+		return padres.stream()
+			.anyMatch(padre -> nodo.getCdNodoPadre().equals(padre.getIdNodo()));
+	}
+
+	/**
+	 * Actualiza la sesión con los datos del usuario.
+	 */
+	private void actualizarSesion(HttpSession session, String usuario, String nivel, 
+			String cenGesEp, String provincia, String entGesEp) {
+		session.setAttribute(SessionAttributes.DNI, usuario);
+		session.setAttribute(SessionAttributes.NIVEL, nivel);
+		session.setAttribute(SessionAttributes.CENTRO, cenGesEp);
+		session.setAttribute(SessionAttributes.PROVINCIA, provincia);
+		session.setAttribute(SessionAttributes.ENTIDAD, entGesEp);
+	}
+
+	/**
+	 * Clase interna para organizar nodos por niveles.
+	 */
+	private static class OrganizacionNodos {
+		List<Nodos> nRaiz = new ArrayList<>();
+		List<Nodos> n1 = new ArrayList<>();
+		List<Nodos> n2 = new ArrayList<>();
 	}
 }

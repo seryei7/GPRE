@@ -3,30 +3,43 @@ package com.giss.gpre.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Excepción personalizada para errores de aplicación en GPRE.
+ * Permite propagar mensajes de error de negocio de forma consistente.
+ */
 public final class GpreException extends Exception {
 	
 	private static final long serialVersionUID = 4862967396430794865L;
-	
-	private final static Logger LOGGER = LoggerFactory.getLogger("gpre.General");
+	private static final Logger LOGGER = LoggerFactory.getLogger("gpre.General");
 
-	public GpreException(String message) {
-		super(message);
-		LOGGER.debug("GpreException: message[" + message + "]");
+	/**
+	 * Constructor con mensaje de error.
+	 * 
+	 * @param mensaje Mensaje descriptivo del error
+	 */
+	public GpreException(String mensaje) {
+		super(mensaje);
+		LOGGER.warn("GpreException: {}", mensaje);
 	}
 	
+	/**
+	 * Constructor con mensaje y causa.
+	 * 
+	 * @param mensaje Mensaje descriptivo del error
+	 * @param causa Excepción que causó este error
+	 */
+	public GpreException(String mensaje, Throwable causa) {
+		super(mensaje, causa);
+		LOGGER.warn("GpreException: {}", mensaje, causa);
+	}
 
+	/**
+	 * Obtiene el mensaje de error.
+	 * 
+	 * @return Mensaje de error o mensaje por defecto
+	 */
 	public String dameMensaje() {
-	  java.lang.reflect.Method elGet = null;
-	  String mensaje = null;
-	  try {
-	    elGet = this.getClass().getMethod("getMessage" , (Class<?>[]) null);
-	    if (elGet != null) {
-	      mensaje = (String)elGet.invoke(this, (Object[])null);
-	    }
-	  } catch (Exception e) {
-	    mensaje = "Error en GpreException.dameMensaje()";
-	  }
-	  return mensaje;
+		String mensaje = getMessage();
+		return mensaje != null ? mensaje : "Error en la aplicación";
 	}
-
 }

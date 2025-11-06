@@ -1,9 +1,6 @@
 package com.giss.gpre.util;
 
 import java.io.IOException;
-
-//import utilejb.DfaException;
-
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -17,36 +14,33 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-//import javax.servlet.http.HttpSession;
 
 import org.owasp.csrfguard.CsrfGuard;
 import org.owasp.csrfguard.session.LogicalSession;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.AccessControlException;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Miguel �ngel Rodr�guez Men�ndez
+ * Utilidad para limpieza y validación de parámetros HTTP.
+ * Proporciona métodos seguros para manejo de peticiones y respuestas.
  * 
+ * @author Miguel Ángel Rodríguez Menéndez
  */
 public final class LimpiarParametro implements Serializable {
 
-	// ------- Clases de Factor�as y Logs -------
-	private final static Logger LOGGER = LoggerFactory.getLogger("gpre.General");
-
+	private static final Logger LOGGER = LoggerFactory.getLogger("gpre.General");
 	private static final long serialVersionUID = 2010052800000001111L;
 
-	protected final static DateFormat DF_1 = new SimpleDateFormat("dd/MM/yyyy");
-	protected final static DateFormat DF_2 = new SimpleDateFormat("dd-MM-yyyy");
-	protected final static DecimalFormat DF_DECIMAL = new DecimalFormat("###,##0.00");
-
-	private final static CsrfGuard xyz0 = CsrfGuard.getInstance();
+	private static final DateFormat DF_1 = new SimpleDateFormat("dd/MM/yyyy");
+	private static final DateFormat DF_2 = new SimpleDateFormat("dd-MM-yyyy");
+	private static final DecimalFormat DF_DECIMAL = new DecimalFormat("###,##0.00");
+	private static final CsrfGuard CSRF_GUARD = CsrfGuard.getInstance();
 
 	private LimpiarParametro() {
-	} // previene instanciacion
+		// Previene instanciación
+	}
 
 	public static final String getParameter(HttpServletRequest request, String parametro) {
 		// LOGGER.debug("request.getMParameter(" + parametro + ")=[" +
@@ -80,80 +74,74 @@ public final class LimpiarParametro implements Serializable {
 		return a;
 	}
 
+	/**
+	 * Establece el Content-Type de forma segura.
+	 */
 	public static final void setSafeContentType(HttpServletResponse response, String tipo) {
-		String fTipo = filtrar(tipo);
-		// LOGGER.debug("setSafeContentType[" + tipo + "] -> [" + fTipo + "]");
-		// response.setContentType(fTipo); // <-- ESAPI kiuwan 60
-		ESAPI.httpUtilities().getCurrentResponse().setContentType(fTipo);
+		String tipoFiltrado = filtrar(tipo);
+		ESAPI.httpUtilities().getCurrentResponse().setContentType(tipoFiltrado);
 	}
 
+	/**
+	 * Añade un header HTTP de forma segura.
+	 */
 	public static final void addSafeHeader(HttpServletResponse response, String name, String value) {
-		String fName = filtrar(name);
-		String fValue = filtrar(value);
-		// LOGGER.debug("addSafeHeader name[" + name + "] value[" + value +
-		// "]");
-		// response.addHeader(fName, fValue); // <-- ESAPI kiuwan 67
-		ESAPI.httpUtilities().addHeader(fName, fValue);
+		String nombreFiltrado = filtrar(name);
+		String valorFiltrado = filtrar(value);
+		ESAPI.httpUtilities().addHeader(nombreFiltrado, valorFiltrado);
 	}
 
+	/**
+	 * Establece un header HTTP de forma segura.
+	 */
 	public static final void setSafeHeader(HttpServletResponse response, String name, String value) {
-		String fName = filtrar(name);
-		String fValue = filtrar(value);
-		// LOGGER.debug("setSafeHeader[" + name + "][" + value + "] -> [" +
-		// fName + "][" + fValue + "]");
-		// response.setHeader(fName, fValue); // <-- ESAPI kiuwan 74
-		ESAPI.httpUtilities().setHeader(fName, fValue);
+		String nombreFiltrado = filtrar(name);
+		String valorFiltrado = filtrar(value);
+		ESAPI.httpUtilities().setHeader(nombreFiltrado, valorFiltrado);
 	}
 
-	//
-	// ��� ESAPI obliga a que las direcciones empiezen por WEB-INF !!!
-	//
-	// This method performs a forward to any resource located inside the WEB-INF
-	// directory. Forwarding to publicly accessible resources can be dangerous,
-	// as the request will have already passed the URL based access control
-	// check.
-	// This method ensures that you can only forward to non-publicly accessible
-	// resources.
-	//
+	/**
+	 * Realiza un forward seguro usando ESAPI.
+	 * Previene ataques de tipo open redirect y path traversal.
+	 * 
+	 * @param request Petición HTTP
+	 * @param response Respuesta HTTP
+	 * @param nextPage Página destino
+	 * @throws IOException Si hay error de I/O
+	 * @throws ServletException Si hay error en el servlet
+	 * @throws AccessControlException Si hay error de control de acceso
+	 */
 	public static final void safeSendForward(HttpServletRequest request, HttpServletResponse response, String nextPage)
 			throws IOException, ServletException, AccessControlException {
-		// String st1 = "WEB-INF/classes/servlets/" +
-		// LimpiarParametro.filtrar(nextPage);
-		String st1 = LimpiarParametro.filtrar(nextPage);
-		// httpreq.getRequestDispatcher(st1).forward(httpreq, httpresp); // <--
-		// ESAPI kiuwan 81
-		// LOGGER.debug("LimpiarParametro.safeSendForward[" + st1 + "]");
-		// ESAPI.httpUtilities().sendForward("/jsp/FormulariosGuardados.jsp");
-		RequestDispatcher dispatcher = ESAPI.currentRequest().getRequestDispatcher(st1);
+		String paginaFiltrada = LimpiarParametro.filtrar(nextPage);
+		RequestDispatcher dispatcher = ESAPI.currentRequest().getRequestDispatcher(paginaFiltrada);
 		dispatcher.forward(ESAPI.currentRequest(), ESAPI.currentResponse());
 	}
 
-	// OWASP
 	/**
+	 * Obtiene el token CSRF de OWASP para una URI específica.
 	 * 
-	 * @param request
-	 * @param uri
-	 * @return
+	 * @param request Petición HTTP
+	 * @param uri URI para la cual generar el token
+	 * @return Token en formato "nombre=valor"
 	 */
 	public static final String getOwaspCsrfTokenGet(HttpServletRequest request, String uri) {
-		final LogicalSession logicalSession = xyz0.getLogicalSessionExtractor().extract(request);
-		String reqToken = xyz0.getTokenService().getTokenValue(logicalSession.getKey(), uri);
-//		LOGGER.debug("LimpiarParametro.getOwaspCsrfTokenGet.token[" + uri + "]='" + reqToken + "' <- [" + request.getRequestURL() + "]" );
-		reqToken = xyz0.getTokenName() + "=" + reqToken;
-		return reqToken;
+		final LogicalSession logicalSession = CSRF_GUARD.getLogicalSessionExtractor().extract(request);
+		String tokenValue = CSRF_GUARD.getTokenService().getTokenValue(logicalSession.getKey(), uri);
+		return CSRF_GUARD.getTokenName() + "=" + tokenValue;
 	}
 
 	/**
+	 * Obtiene la URL completa con el token CSRF embebido.
 	 * 
-	 * @param request
-	 * @param uri
-	 * @return
+	 * @param request Petición HTTP
+	 * @param uri URI base
+	 * @return URL completa con token
 	 */
 	public static final String getOwaspCsrfURLToken(HttpServletRequest request, String uri) {
-		final LogicalSession logicalSession = xyz0.getLogicalSessionExtractor().extract(request);
-		String reqToken = xyz0.getTokenService().getTokenValue(logicalSession.getKey(), uri);
-//		LOGGER.debug("LimpiarParametro.getOwaspCsrfTokenGet.token[" + uri + "]='" + reqToken + "' <- [" + request.getRequestURL() + "]" );
-		return uri + "?" + xyz0.getTokenName() + "=" + reqToken;
+		final LogicalSession logicalSession = CSRF_GUARD.getLogicalSessionExtractor().extract(request);
+		String tokenValue = CSRF_GUARD.getTokenService().getTokenValue(logicalSession.getKey(), uri);
+		return uri + "?" + CSRF_GUARD.getTokenName() + "=" + tokenValue;
 	}
 
 	/**
@@ -188,63 +176,76 @@ public final class LimpiarParametro implements Serializable {
 		return valor;
 	}
 
-	/*
-	 * public static String encode(String codeHTML){ StringBuffer sbuf = new
-	 * StringBuffer(); char[] chars = codeHTML.toCharArray(); for(int i=0;
-	 * i<chars.length; i++) { sbuf.append("&#" + (int) chars[i] + ";"); } return
-	 * sbuf.toString(); }
+	/**
+	 * Codifica HTML escapando caracteres especiales.
+	 * 
+	 * @param codeHTML Código HTML a codificar
+	 * @return HTML codificado
 	 */
-
 	public static final String htmlEncode(String codeHTML) {
-		StringBuffer sbuf = new StringBuffer();
+		StringBuilder builder = new StringBuilder();
 		char[] chars = codeHTML.toCharArray();
-		int c;
-		for (int i = 0; i < chars.length; i++) {
-			c = (int) chars[i];
-			if ((c >= 160 && c <= 255) ||
-			// comprueba (", &, ', <, >)
-					c == 34 || c == 38 || c == 39 || c == 60 || c == 62) {
-				// (c>=32 && c<=64) ) {
-				sbuf.append("&#" + (int) chars[i] + ";");
+		
+		for (char c : chars) {
+			int charValue = (int) c;
+			// Codificar caracteres especiales y latinos extendidos
+			if ((charValue >= 160 && charValue <= 255) || 
+				charValue == 34 || charValue == 38 || charValue == 39 || 
+				charValue == 60 || charValue == 62) {
+				builder.append("&#").append(charValue).append(";");
 			} else {
-				sbuf.append(chars[i]);
+				builder.append(c);
 			}
 		}
-		return sbuf.toString();
+		return builder.toString();
 	}
 
-	//
-	//
-	//
-	public static String dameMensaje(Object elObjeto) {
-		java.lang.reflect.Method elGet = null;
-		String mensaje = null;
+	/**
+	 * Extrae el mensaje de error de un objeto Exception.
+	 * 
+	 * @param objeto Objeto que contiene el error
+	 * @return Mensaje del error o mensaje por defecto
+	 */
+	public static String dameMensaje(Object objeto) {
 		try {
-			elGet = elObjeto.getClass().getMethod("getMessage", (Class<?>[]) null);
-			if (elGet != null) {
-				mensaje = (String) elGet.invoke(elObjeto, (Object[]) null);
+			java.lang.reflect.Method metodoGetMessage = objeto.getClass()
+				.getMethod("getMessage", (Class<?>[]) null);
+			
+			if (metodoGetMessage != null) {
+				return (String) metodoGetMessage.invoke(objeto, (Object[]) null);
 			}
 		} catch (Exception e) {
-			// LOGGER.error("No existe el metodo en la clase" +
-			// elObjeto.getClass().getName(), e);
-			mensaje = "Error getMessage() en " + elObjeto.getClass().getName();
+			LOGGER.warn("No se pudo extraer mensaje de: {}", objeto.getClass().getName());
 		}
-		return mensaje;
+		return "Error en " + objeto.getClass().getSimpleName();
 	}
 
-	//
-	//
-	//
+	/**
+	 * Obtiene un mensaje de error formateado a partir de un Throwable.
+	 * 
+	 * @param t Throwable del que extraer el mensaje
+	 * @return Mensaje de error formateado
+	 */
 	public static final String getMensajeError(Throwable t) {
-		String mensaje = "";
-		mensaje = (t == null) ? "La session no es valida"
-				: (dameMensaje(t) == null) ? t.toString() : htmlEncode(dameMensaje(t));
-		mensaje = (mensaje.equals("java.lang.NullPointerException")) ? "Error de aplicaci�n" : mensaje;
-		mensaje = (mensaje.indexOf("java.lang.NullPointerException") >= 0)
-				? "Se ha producido un error procesando la petici�n" : mensaje;
-		mensaje = (mensaje.indexOf("TransactionRolledbackException") >= 0) ? "Error de acceso a base de datos"
-				: mensaje;
-		mensaje = (mensaje.indexOf("CORBA") >= 0) ? "Error de acceso a base de datos" : mensaje;
+		if (t == null) {
+			return "La sesión no es válida";
+		}
+		
+		String mensaje = dameMensaje(t);
+		if (mensaje == null) {
+			mensaje = t.toString();
+		} else {
+			mensaje = htmlEncode(mensaje);
+		}
+		
+		// Reemplazar mensajes técnicos por mensajes amigables
+		if (mensaje.contains("java.lang.NullPointerException")) {
+			return "Se ha producido un error procesando la petición";
+		}
+		if (mensaje.contains("TransactionRolledbackException") || mensaje.contains("CORBA")) {
+			return "Error de acceso a base de datos";
+		}
+		
 		return mensaje;
 	}
 
