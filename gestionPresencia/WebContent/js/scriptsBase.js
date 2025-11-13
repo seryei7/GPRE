@@ -250,6 +250,30 @@ function onMenuLinkClick(event, anchorEl, idList) {
   return true;
 }
 
+/**
+ * Actualiza el estado del botón de impresión según la sección del menú seleccionada
+ * @param {string} section - Código de la sección padre del menú
+ * @param {string} subSection - Código de la subsección del menú
+ */
+function updatePrintButtonState(section, subSection) {
+	const printButton = document.getElementById('printButton');
+	if (!printButton) return;
+	
+	// Secciones que habilitan el botón de impresión
+	const sectionsWithPrint = ['7000', '7100'];
+	
+	// Verificar si la sección actual debe habilitar el botón
+	const shouldEnable = sectionsWithPrint.includes(section);
+	
+	if (shouldEnable) {
+		printButton.removeAttribute('disabled');
+		printButton.classList.add('enabled');
+	} else {
+		printButton.setAttribute('disabled', 'true');
+		printButton.classList.remove('enabled');
+	}
+}
+
 //window.location.protocol
 function incluirJSP(path, nodo) {
 	const url = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/gestionPresencia/" + path;
@@ -296,6 +320,10 @@ function incluirJSP(path, nodo) {
 function changeContent(section, subSection, token, nameSec) {
     let content = '';
     let path = '';
+    
+    // Actualizar estado del botón de impresión según la sección
+    updatePrintButtonState(section, subSection);
+    
     switch(section) {
         case '1000':
         	nodo = nodosMantenimiento(subSection);
