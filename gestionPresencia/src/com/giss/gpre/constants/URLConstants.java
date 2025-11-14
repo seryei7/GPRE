@@ -28,4 +28,5 @@ public final class URLConstants {
     public static final String PERSONAS_NIVEL_ACCESO_JSP = JSP_PATH + "PersonasNivelAcceso.jsp";
     public static final String SALDO_INDIVIDUAL_JSP = JSP_PATH + "SaldoIndividual.jsp";
     public static final String SALDO_SEMANAL_JSP = JSP_PATH + "SaldoSemanal.jsp";
+    public static final String USUARIO_SITUACION_JSP = JSP_PATH + "UsuarioSituacion.jsp";
 }
