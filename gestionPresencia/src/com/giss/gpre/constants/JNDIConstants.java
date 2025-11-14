@@ -23,4 +23,5 @@ public final class JNDIConstants {
     public static final String TIPO_PERSONAL_SERVICE = JNDI_PREFIX + "TipoPersonalServiceBean";
     public static final String INFORME_SALDO_MES_SERVICE = JNDI_PREFIX + "InformeSaldoMesServiceBean";
     public static final String PERSONAS_NIVEL_SERVICE = JNDI_PREFIX + "PersonasNivelServiceBean";
+    public static final String USUARIO_SITUACION_SERVICE = JNDI_PREFIX + "UsuarioSituacionServiceBean";
 }
