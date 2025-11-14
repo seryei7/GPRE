@@ -17,6 +17,12 @@ La consulta implementada combina información de las siguientes tablas:
 - **GRUPOUSUARIOS**: Grupos de usuarios con permisos
 - **AREAS_TRABAJO_SEL**: Áreas de trabajo seleccionadas
 
+### Características Específicas de la Query
+
+1. **DISTINCT**: Elimina registros duplicados del resultado
+2. **Exclusión de ADMONPUBLICA**: `HISTORICOSITUACIONES.CDEMPRESA <> 'ADMONPUBLICA'`
+3. **Exclusión del usuario consultor**: `GRUPOUSUARIOS.CDDNI <> :cdUsuario` - El usuario que realiza la consulta no aparece en los resultados
+
 ## Componentes Creados
 
 ### 1. Capa de Datos (DTO)
@@ -83,11 +89,14 @@ public static final String USUARIO_SITUACION_JSP = JSP_PATH + "UsuarioSituacion.
 
 La consulta implementa las siguientes características:
 
-1. **Filtrado por Usuario**: Utiliza el DNI del usuario autenticado para filtrar los resultados
-2. **Filtrado por Fecha**: Solo muestra situaciones vigentes (FCFIN >= fecha actual OR FCFIN='99991231')
-3. **Permisos**: Respeta los permisos del usuario basándose en GRUPOUSUARIOS y AREAS_TRABAJO_SEL
-4. **Outer Joins**: Utiliza Oracle outer join syntax (+) para CONTRATOS, CODDEN y CODDEN_EMP
-5. **Joins Complejos**: Combina múltiples tablas con claves compuestas (ENTI_GES_EP, PROV_EP, CEN_GES_EP)
+1. **DISTINCT**: Elimina filas duplicadas del conjunto de resultados
+2. **Filtrado por Usuario**: Utiliza el DNI del usuario autenticado para filtrar los resultados
+3. **Exclusión del Consultor**: El propio usuario que realiza la consulta NO aparece en los resultados (`GRUPOUSUARIOS.CDDNI <> :cdUsuario`)
+4. **Exclusión de ADMONPUBLICA**: Filtra empresas con código 'ADMONPUBLICA' (`HISTORICOSITUACIONES.CDEMPRESA <> 'ADMONPUBLICA'`)
+5. **Filtrado por Fecha**: Solo muestra situaciones vigentes (FCFIN >= fecha actual OR FCFIN='99991231')
+6. **Permisos**: Respeta los permisos del usuario basándose en GRUPOUSUARIOS y AREAS_TRABAJO_SEL
+7. **Outer Joins**: Utiliza Oracle outer join syntax (+) para CONTRATOS, CODDEN y CODDEN_EMP
+8. **Joins Complejos**: Combina múltiples tablas con claves compuestas (ENTI_GES_EP, PROV_EP, CEN_GES_EP)
 
 ## Cómo Usar
 

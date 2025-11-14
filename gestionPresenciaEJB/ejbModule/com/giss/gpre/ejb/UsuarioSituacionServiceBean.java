@@ -30,7 +30,9 @@ public class UsuarioSituacionServiceBean implements UsuarioSituacionService {
 
         try {
             // Query nativa que combina información de múltiples tablas
-            String sql = "SELECT PERSONAS.APELLIDO1, PERSONAS.APELLIDO2, PERSONAS.NOMBRE, " +
+            // NOTA: Usa DISTINCT para eliminar duplicados
+            // Excluye ADMONPUBLICA y al propio usuario consultor de los resultados
+            String sql = "SELECT DISTINCT PERSONAS.APELLIDO1, PERSONAS.APELLIDO2, PERSONAS.NOMBRE, " +
                     "PERSONAS.IDDNI, PERSONAS.CDTARJETA, " +
                     "HISTORICOSITUACIONES.ENTI_GES_EP, HISTORICOSITUACIONES.PROV_EP, " +
                     "HISTORICOSITUACIONES.CEN_GES_EP, UNIDADES.DSUNIDAD, " +
@@ -40,10 +42,12 @@ public class UsuarioSituacionServiceBean implements UsuarioSituacionService {
                     "FROM PERSONAS, UNIDADES, GRUPOUSUARIOS, EMPRESAS, CONTRATOS, CODDEN, " +
                     "HISTORICOSITUACIONES, CODDEN_EMP, AREAS_TRABAJO_SEL " +
                     "WHERE GRUPOUSUARIOS.CDUSUARIO = :cdUsuario " +
+                    "AND HISTORICOSITUACIONES.CDEMPRESA <> 'ADMONPUBLICA' " +
                     "AND HISTORICOSITUACIONES.ENTI_GES_EP = GRUPOUSUARIOS.ENTI_GES_EP " +
                     "AND HISTORICOSITUACIONES.PROV_EP = GRUPOUSUARIOS.PROV_EP " +
                     "AND HISTORICOSITUACIONES.CEN_GES_EP = GRUPOUSUARIOS.CEN_GES_EP " +
                     "AND HISTORICOSITUACIONES.CDDNI = GRUPOUSUARIOS.CDDNI " +
+                    "AND GRUPOUSUARIOS.CDDNI <> :cdUsuario " +
                     "AND (HISTORICOSITUACIONES.FCFIN >= TO_CHAR(SYSDATE,'YYYYMMDD') " +
                     "     OR HISTORICOSITUACIONES.FCFIN = '99991231') " +
                     "AND HISTORICOSITUACIONES.FCINICIO <= TO_CHAR(SYSDATE,'YYYYMMDD') " +
