@@ -47,6 +47,9 @@
     const table = document.getElementById('dataTable');
     const toggleControls = document.getElementById('toggleControls');
     const countSpan = document.getElementById('elementCount');
+    
+    // Almacenar el código subsection para el informe (Personal Alta = 3010)
+    window.currentSubSection = '3010';
 
     if (!controlsGrid || !theadRow || !tbody || !table) {
       console.warn('[Personal] Elementos requeridos no encontrados, init cancelado.');
@@ -312,10 +315,62 @@
     function desactivarBotones() {
       document.getElementById('insertButton').disabled = true;
       document.getElementById('deleteButton').disabled = true;
-      document.getElementById('printButton').disabled = true;
       document.getElementById('newsButton').disabled = true;
       document.getElementById('keyButton').disabled = true;
       document.getElementById('searchButton').disabled = true;
+      
+      // Habilitar el botón de impresión si hay datos
+      const printButton = document.getElementById('printButton');
+      if (printButton) {
+        if (data && data.length > 0) {
+          printButton.disabled = false;
+          printButton.onclick = function() {
+            generarPdfPersonal();
+          };
+        } else {
+          printButton.disabled = true;
+        }
+      }
+    }
+    
+    function generarPdfPersonal() {
+      const printButton = document.getElementById('printButton');
+      
+      // Deshabilitar el botón mientras se genera el PDF
+      if (printButton) {
+        printButton.disabled = true;
+      }
+      
+      // Obtener el código subsection
+      const subSection = window.currentSubSection || '3010';
+      
+      // Enviar la lista de personas al servlet
+      fetch('/gestionPresencia/generarPdfPersonal?subsection=' + subSection, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.pdfUrl) {
+          // Abrir el PDF en una nueva ventana
+          openPDF(result.pdfUrl);
+        } else if (result.error) {
+          alert('Error al generar el PDF: ' + result.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error al generar el PDF: ' + error);
+      })
+      .finally(() => {
+        // Rehabilitar el botón
+        if (printButton) {
+          printButton.disabled = false;
+        }
+      });
     }
   };
 })();
