@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Implementation-Version: 01.02.03
+Class-Path: gestionPresenciaEJB.jar
+

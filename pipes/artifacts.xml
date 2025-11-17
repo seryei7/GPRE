@@ -1,0 +1,30 @@
+<artifacts>
+	<xl>
+		<name>Applications/was/was9/GPRE/GPRE/${VERSION}</name> <!-- denominacion de aplicacion en XL -->
+
+        <id>GPRE</id>
+			
+	
+		<environment env="INT">
+			<name>Environments/was/was9/int3/was-was9-int3</name>	<!-- denominacion del entorno en XL -->
+		</environment>
+		<environment env="CER">
+			<name>Environments/was/was9/int1/was-was9-int1</name>
+		</environment>
+
+		<environment env="PRE">
+			<name>Environments/was/was9/pre1/was-was9-pre1</name>
+		</environment>
+
+		<environment env="PRO">
+			<name>Environments/was/was9/pro/was-was9-pro</name>
+		</environment>
+		
+	
+	</xl>
+	<artifact name="artf1" origin="local" type="xl">
+		<xl_name>GPRE</xl_name> 
+		<xl_type>file.file</xl_type>
+		<nexus_file>GPRE.ear</nexus_file>
+	</artifact>
+</artifacts>

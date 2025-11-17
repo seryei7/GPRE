@@ -1,0 +1,498 @@
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Dashboard Light Style</title>
+<link rel="stylesheet" href="/gestionPresencia/css/base.css">
+<link rel="stylesheet" href="/gestionPresencia/css/bootstrap.min.css">
+<link rel="stylesheet" href="/gestionPresencia/font-awesome/css/font-awesome.min.css">
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+	<div>
+		<header class="logo-style">
+			<!-- Header Navbar -->
+			<div class="logo-style navbar navbar-static-top padding-15px">
+				<div class="col-lg-3 col-md-3 col-sm-4 hidden-xs">
+					<img
+						src="/gestionPresencia/img/logo-institucional.png"
+						class="img-responsive img-rounded logo-height hidden-md hidden-sm hidden-xs"
+						alt="Imagen logo institucional">
+				</div>
+
+				<div class="col-xs-4 hidden-md hidden-sm hidden-lg">
+					<img
+						src="/gestionPresencia/img/logo-institucional-mini.png"
+						class="img-responsive img-rounded logo-height"
+						alt="Imagen logo institucional en miniatura">
+				</div>
+
+				<!-- Sidebar toggle button-->
+				<div
+					class="col-lg-6 col-md-6 col-sm-4 col-xs-5 centrarTexto padding-top-10px">
+					<span class="hidden-md hidden-sm hidden-xs"> <strong
+						class="title-header-one">GPRE - Gestión de Control de
+							Presencia</strong>
+					</span>
+					<h1 class="hidden-lg title-header-one">
+						<strong>GPRE</strong>
+					</h1>
+				</div>
+
+				<!-- Navbar Right Menu -->
+				<div class="col-md-3 col-sm-4 col-xs-3 pull-right centrarTexto">
+					<div class="user-profile" tabindex="0">
+						<div class="col-lg-2 col-xs-6 padding-top-10px">
+							<img class="img-circle img-user" id="imagenUsuarioRegistrado"
+								alt="Usuario Registrado"
+								src="/gestionPresencia/img/user.png"></img>
+						</div>
+						<div class="col-lg-8 textoUsuarioLogado hidden-md hidden-sm hidden-xs">
+							
+							
+							<div>VIRGILIO DESARROLLO DS09</div>
+							<div>ADMONPUBLICA</div>
+							<div>90 - 60 - 0</div>
+						</div>
+						<div class="col-lg-1 col-xs-6 padding-top-10px homeHeader">
+							<a href="/gestionPresencia/acceso?tDni=000413207N">
+								<i class="fa fa-home" title="Inicio"></i><span class="invisible">Inicio</span>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+		<!-- Left side column. contains the logo and sidebar   -->
+		
+		
+		<div class="cajon-table">
+			
+
+
+
+
+
+
+
+<div class="content-header lightblue marco_principal" id="marcoSelArea">
+	<section class="content-header">
+		<h1>ELECCIÓN ÁREA DE TRABAJO</h1>
+	</section>
+	<!-- Main content -->
+	<section class="content">
+		<h2 class="invisible">ELECCIÓN ÁREA DE TRABAJO</h2>
+		<!-- Tabla de resultados -->
+		<div class="table-responsive table-container">
+			<table>
+				<caption class="invisible">Datos de areas</caption>
+				<thead>
+					<tr>
+						<th>DENOMINACIÓN</th>
+						<th>ENTIDAD</th>
+						<th>PROVINCIA</th>
+						<th>CENTRO GESTOR</th>
+						<th>NIVEL</th>
+						<th>SELECCIÓN</th>
+					</tr>
+				</thead>
+				<tbody>
+					
+					<tr>
+						<td>DESCONOCIDA </td>
+						<td>0</td>
+						<td>0</td>
+						<td>0</td>
+						<td>9999</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_0" value="9999"/>
+								<input type="hidden" name="tDni" id="ind_0" value="000413207N"/>
+								<input type="button" id="check_0" name="check_0" value="" class="checkbox-phantom" onclick="confirmarArea(0, check_0)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>IMSERSO SS.CC.                                     </td>
+						<td>3</td>
+						<td>60</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_1" value="1"/>
+								<input type="hidden" name="tDni" id="ind_1" value="000413207N"/>
+								<input type="button" id="check_1" name="check_1" value="" class="checkbox-phantom" onclick="confirmarArea(1, check_1)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Instituto Social de la Marina de ALICANTE</td>
+						<td>4</td>
+						<td>3</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_2" value="1"/>
+								<input type="hidden" name="tDni" id="ind_2" value="000413207N"/>
+								<input type="button" id="check_2" name="check_2" value="" class="checkbox-phantom" onclick="confirmarArea(2, check_2)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Instituto Social de la Marina de LAS PALMAS</td>
+						<td>4</td>
+						<td>35</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_3" value="1"/>
+								<input type="hidden" name="tDni" id="ind_3" value="000413207N"/>
+								<input type="button" id="check_3" name="check_3" value="" class="checkbox-phantom" onclick="confirmarArea(3, check_3)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Instituto Social de la Marina de CANTABRIA</td>
+						<td>4</td>
+						<td>39</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_4" value="1"/>
+								<input type="hidden" name="tDni" id="ind_4" value="000413207N"/>
+								<input type="button" id="check_4" name="check_4" value="" class="checkbox-phantom" onclick="confirmarArea(4, check_4)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Instituto Social de la Marina de S.CENTRALES</td>
+						<td>4</td>
+						<td>60</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_5" value="1"/>
+								<input type="hidden" name="tDni" id="ind_5" value="000413207N"/>
+								<input type="button" id="check_5" name="check_5" value="" class="checkbox-phantom" onclick="confirmarArea(5, check_5)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Unidad Prov. de Informatica de  AVILA       </td>
+						<td>5</td>
+						<td>5</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_6" value="1"/>
+								<input type="hidden" name="tDni" id="ind_6" value="000413207N"/>
+								<input type="button" id="check_6" name="check_6" value="" class="checkbox-phantom" onclick="confirmarArea(6, check_6)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Unidad Prov. de Informatica de  S. CENTRALES</td>
+						<td>5</td>
+						<td>60</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_7" value="1"/>
+								<input type="hidden" name="tDni" id="ind_7" value="000413207N"/>
+								<input type="button" id="check_7" name="check_7" value="" class="checkbox-phantom" onclick="confirmarArea(7, check_7)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Unidad Prov. de Informatica de  S. CENTRALES</td>
+						<td>5</td>
+						<td>60</td>
+						<td>0</td>
+						<td>2</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_8" value="2"/>
+								<input type="hidden" name="tDni" id="ind_8" value="000413207N"/>
+								<input type="button" id="check_8" name="check_8" value="" class="checkbox-phantom" onclick="confirmarArea(8, check_8)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Unidad Prov. de Informatica de  S. CENTRALES</td>
+						<td>5</td>
+						<td>60</td>
+						<td>0</td>
+						<td>8</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_9" value="8"/>
+								<input type="hidden" name="tDni" id="ind_9" value="000413207N"/>
+								<input type="button" id="check_9" name="check_9" value="" class="checkbox-phantom" onclick="confirmarArea(9, check_9)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Unidad Prov. de Informatica de  S. CENTRALES</td>
+						<td>5</td>
+						<td>60</td>
+						<td>0</td>
+						<td>9</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_10" value="9"/>
+								<input type="hidden" name="tDni" id="ind_10" value="000413207N"/>
+								<input type="button" id="check_10" name="check_10" value="" class="checkbox-phantom" onclick="confirmarArea(10, check_10)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Unidad Prov. de Informatica de  S. CENTRALES</td>
+						<td>5</td>
+						<td>60</td>
+						<td>0</td>
+						<td>22</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_11" value="22"/>
+								<input type="hidden" name="tDni" id="ind_11" value="000413207N"/>
+								<input type="button" id="check_11" name="check_11" value="" class="checkbox-phantom" onclick="confirmarArea(11, check_11)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Unidad Prov. de Informatica de  S. CENTRALES</td>
+						<td>5</td>
+						<td>60</td>
+						<td>0</td>
+						<td>9999</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_12" value="9999"/>
+								<input type="hidden" name="tDni" id="ind_12" value="000413207N"/>
+								<input type="button" id="check_12" name="check_12" value="" class="checkbox-phantom" onclick="confirmarArea(12, check_12)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Personal de la GISS en Torrejón</td>
+						<td>5</td>
+						<td>60</td>
+						<td>62</td>
+						<td>2</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_13" value="2"/>
+								<input type="hidden" name="tDni" id="ind_13" value="000413207N"/>
+								<input type="button" id="check_13" name="check_13" value="" class="checkbox-phantom" onclick="confirmarArea(13, check_13)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Dirección Provincial TESORERIA de ALAVA       </td>
+						<td>6</td>
+						<td>1</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_14" value="1"/>
+								<input type="hidden" name="tDni" id="ind_14" value="000413207N"/>
+								<input type="button" id="check_14" name="check_14" value="" class="checkbox-phantom" onclick="confirmarArea(14, check_14)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Dirección Provincial TESORERIA de AVILA       </td>
+						<td>6</td>
+						<td>5</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_15" value="1"/>
+								<input type="hidden" name="tDni" id="ind_15" value="000413207N"/>
+								<input type="button" id="check_15" name="check_15" value="" class="checkbox-phantom" onclick="confirmarArea(15, check_15)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>Dirección Provincial TESORERIA de MADRID      </td>
+						<td>6</td>
+						<td>28</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_16" value="1"/>
+								<input type="hidden" name="tDni" id="ind_16" value="000413207N"/>
+								<input type="button" id="check_16" name="check_16" value="" class="checkbox-phantom" onclick="confirmarArea(16, check_16)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>MINISTERIO DE INCLUSIÓN, SEGURIDAD SOCIAL Y MIGRACIONES</td>
+						<td>90</td>
+						<td>60</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_17" value="1"/>
+								<input type="hidden" name="tDni" id="ind_17" value="000413207N"/>
+								<input type="button" id="check_17" name="check_17" value="" class="checkbox-phantom" onclick="confirmarArea(17, check_17)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>MINISTERIO DE INCLUSIÓN, SEGURIDAD SOCIAL Y MIGRACIONES</td>
+						<td>90</td>
+						<td>60</td>
+						<td>0</td>
+						<td>2</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_18" value="2"/>
+								<input type="hidden" name="tDni" id="ind_18" value="000413207N"/>
+								<input type="button" id="check_18" name="check_18" value="" class="checkbox-phantom" onclick="confirmarArea(18, check_18)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>SERVICIO JURIDICO SS.CC.</td>
+						<td>91</td>
+						<td>60</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_19" value="1"/>
+								<input type="hidden" name="tDni" id="ind_19" value="000413207N"/>
+								<input type="button" id="check_19" name="check_19" value="" class="checkbox-phantom" onclick="confirmarArea(19, check_19)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>SERVICIO JURIDICO SS.CC.</td>
+						<td>91</td>
+						<td>60</td>
+						<td>0</td>
+						<td>2</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_20" value="2"/>
+								<input type="hidden" name="tDni" id="ind_20" value="000413207N"/>
+								<input type="button" id="check_20" name="check_20" value="" class="checkbox-phantom" onclick="confirmarArea(20, check_20)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>GABINETE, SECRETARIA DE ESTADO</td>
+						<td>92</td>
+						<td>60</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_21" value="1"/>
+								<input type="hidden" name="tDni" id="ind_21" value="000413207N"/>
+								<input type="button" id="check_21" name="check_21" value="" class="checkbox-phantom" onclick="confirmarArea(21, check_21)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>GABINETE, SECRETARIA DE ESTADO</td>
+						<td>92</td>
+						<td>60</td>
+						<td>0</td>
+						<td>2</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_22" value="2"/>
+								<input type="hidden" name="tDni" id="ind_22" value="000413207N"/>
+								<input type="button" id="check_22" name="check_22" value="" class="checkbox-phantom" onclick="confirmarArea(22, check_22)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>D.G ORDENACION DE LA SEGURIDAD SOCIAL</td>
+						<td>93</td>
+						<td>60</td>
+						<td>0</td>
+						<td>1</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_23" value="1"/>
+								<input type="hidden" name="tDni" id="ind_23" value="000413207N"/>
+								<input type="button" id="check_23" name="check_23" value="" class="checkbox-phantom" onclick="confirmarArea(23, check_23)"/>
+							</form>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>D.G ORDENACION DE LA SEGURIDAD SOCIAL</td>
+						<td>93</td>
+						<td>60</td>
+						<td>0</td>
+						<td>2</td>
+						<td class="centrarTexto">
+							<form action='/gestionPresencia/NodosTrabajos?OWASP-CSRFTOKEN=U7DK-6G2T-XRB1-ZZIK-ZTXX-ETBP-9YTN-ZK0O' method="post">
+								<input type="hidden" name="cdNivel" id="nivel_24" value="2"/>
+								<input type="hidden" name="tDni" id="ind_24" value="000413207N"/>
+								<input type="button" id="check_24" name="check_24" value="" class="checkbox-phantom" onclick="confirmarArea(24, check_24)"/>
+							</form>
+						</td>
+					</tr>
+					
+				</tbody>
+			</table>
+		</div>
+	</section>
+</div>
+		</div>
+		
+	</div>
+
+
+	<script src="/gestionPresencia/js/scriptsBase.js"></script>
+</body>
+
+</html>

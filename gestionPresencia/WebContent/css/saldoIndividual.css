@@ -1,0 +1,133 @@
+.container {
+    max-width: 700px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+fieldset {
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    padding: 10px;
+}
+
+legend {
+    font-weight: bold;
+}
+
+label {
+    display: inline-block;
+    width: 120px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input[type="text"], input[type="date"] {
+    width: calc(100% - 130px);
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.buttons input {
+    padding: 8px 16px;
+    margin: 0 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Estilo para el rango de fechas */
+.fecha-rango {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap; /* permite que se apilen si no hay espacio */
+}
+
+.fecha-rango label {
+    width: auto;
+    font-weight: bold;
+}
+
+.fecha-rango input[type="date"] {
+    width: auto;
+    padding: 5px;
+}
+
+/* Media query para pantallas pequeñas */
+@media (max-width: 600px) {
+    label {
+        width: 100%;
+    }
+
+    input[type="text"], input[type="date"] {
+        width: 100%;
+    }
+
+    .fecha-rango {
+        flex-direction: column; /* apilar verticalmente */
+        align-items: flex-start;
+    }
+
+    .fecha-rango span {
+        margin-top: 5px;
+    }
+}
+
+
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.form-row label {
+    width: 150px;
+    font-weight: bold;
+}
+.form-row input[type="text"], 
+.form-row input[type="date"] {
+    padding: 5px;
+    margin-right: 10px;
+}
+.columns {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.column {
+    width: 48%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #fafafa;
+}
+.column h3 {
+    margin-top: 0;
+    font-size: 14px;
+    background-color: #eaeaea;
+    padding: 5px;
+}
+.checkbox-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.checkbox-list li {
+    margin-bottom: 5px;
+}
+
+#btnInforme:disabled {
+  background-color: #ccc;   /* Gris claro */
+  color: #666;              /* Texto gris oscuro */
+  opacity: 0.7;             /* Un poco transparente */
+}

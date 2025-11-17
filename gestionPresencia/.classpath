@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path=".apt_generated">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/gestionPresenciaEJB"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/com.ibm.ws.ast.st.runtime.runtimeTarget.v90/WebSphere Application Server traditional V9.0">
+		<attributes>
+			<attribute name="owner.project.facets" value="jst.web"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/csrfguard-4.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/logback-classic-1.2.3.jar"/>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/logback-core-1.2.3.jar"/>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/slf4j-api-1.7.26.jar"/>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/csrfguard-extension-session-4.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/gson-2.10.1.jar"/>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/WSIPComunClientes.jar"/>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/WSIPValidaciones.jar"/>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/WSIPConstantes.jar"/>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/WSIPCliente.jar"/>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/sojo-1.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/IMALRepositoriesBeans.jar"/>
+	<classpathentry kind="lib" path="C:/Proyectos WENN/Desarrollo/GPRE/esapi-2.2.0.0.jar"/>
+	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
+</classpath>
